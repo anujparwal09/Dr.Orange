@@ -1,0 +1,63 @@
+# ============================================
+# Dr. Orange — Root .gitignore
+# ============================================
+
+# ---- OS & Editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---- Dataset (very large — do NOT push) ----
+Ornage disease dataset/
+
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ---- Virtual environments ----
+venv/
+env/
+.venv/
+.env
+
+# ---- Backend ----
+backend/.env
+backend/instance/
+backend/uploads/
+backend/reports/
+backend/__pycache__/
+backend/routes/__pycache__/
+backend/model/__pycache__/
+backend/dr_orange.db
+
+# ---- ML Model (too large for GitHub — use Git LFS or download separately) ----
+backend/model/*.keras
+backend/model/*.h5
+*.keras
+*.h5
+
+# ---- ML Training ----
+ml/__pycache__/
+ml/logs/
+ml/training_log.csv
+
+# ---- Frontend ----
+frontend/node_modules/
+frontend/.next/
+frontend/.env.local
+frontend/build_output.txt
+
+# ---- Misc ----
+*.log
+.antigravityignore
+.gemini/

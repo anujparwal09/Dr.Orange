@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --orange: #FF8C00;
+  --orange-red: #FF4500;
+  --orange-amber: #FFB347;
+  --green: #2D8A4E;
+  --bg: #070707;
+  --bg2: #0d0d0d;
+  --cream: #FAF5E4;
+  --muted: #8A7F70;
+  --glass: rgba(255,255,255,0.04);
+  --glass2: rgba(255,255,255,0.07);
+  --border: rgba(255,140,0,0.18);
+  --border2: rgba(255,140,0,0.35);
+  --glow: rgba(255,140,0,0.15);
+  --glow2: rgba(255,140,0,0.3);
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg);
+  color: var(--cream);
+  font-family: var(--font-dm), 'DM Sans', sans-serif;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(255,140,0,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,140,0,0.4); }
+
+/* GLASSMORPHISM */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.page-main-container {
+  padding-top: 120px;
+  padding-bottom: 80px;
+}
+
+/* KEYFRAMES FOR CANVAS/PARTICLE ANIMATIONS (non-Framer-Motion) */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(1.3); } }
+@keyframes orangeFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-12px); } }
+@keyframes scanline { 0% { top:10%; opacity:0; } 10% { opacity:1; } 90% { opacity:1; } 100% { top:90%; opacity:0; } }
+@keyframes loadBar { from { width:0; } to { width:100%; } }
+@keyframes loaderPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.08); } }
+@keyframes typingBounce { 0%,60%,100% { transform:translateY(0); } 30% { transform:translateY(-6px); } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(24px); } to { opacity:1; transform:translateY(0); } }
+@keyframes stethPulse { 0%,100% { transform:scale(1); filter:drop-shadow(0 0 4px rgba(255,140,0,.3)); } 50% { transform:scale(1.03); filter:drop-shadow(0 0 10px rgba(255,140,0,.5)); } }
+
+/* ORB DRIFT KEYFRAMES */
+@keyframes orbDrift1 { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(60px,-50px) scale(1.05); } 66% { transform:translate(-30px,40px) scale(0.95); } }
+@keyframes orbDrift2 { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(-50px,30px) scale(1.06); } 66% { transform:translate(40px,-60px) scale(0.94); } }
+@keyframes orbDrift3 { 0%,100% { transform:translate(-50%,-50%) scale(1); } 33% { transform:translate(calc(-50% + 40px),calc(-50% - 30px)) scale(1.05); } 66% { transform:translate(calc(-50% - 30px),calc(-50% + 40px)) scale(0.95); } }
+@keyframes orbDrift4 { 0%,100% { transform:translate(0,0) scale(1); } 33% { transform:translate(-40px,-30px) scale(1.08); } 66% { transform:translate(30px,40px) scale(0.94); } }
+
+/* FALLING ORANGES */
+@keyframes fall-1 { 0% { transform:translateY(-8vh) rotate(0deg) scale(1); } 100% { transform:translateY(108vh) rotate(360deg) scale(0.85); } }
+@keyframes fall-2 { 0% { transform:translateY(-8vh) rotate(0deg) scale(1); } 100% { transform:translateY(108vh) rotate(-280deg) scale(0.9); } }
+@keyframes fall-3 { 0% { transform:translateY(-8vh) rotate(0deg) scale(1); } 100% { transform:translateY(108vh) rotate(200deg) scale(0.8); } }
+@keyframes fall-sway { 0%,100% { transform:translateX(0); } 50% { transform:translateX(20px); } }
+@keyframes fall-sway-rev { 0%,100% { transform:translateX(0); } 50% { transform:translateX(-20px); } }
