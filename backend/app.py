@@ -105,7 +105,7 @@ def create_app(config_name='development'):
 # Load model at startup
 from model.model_loader import load_model_once
 
-app = create_app(os.getenv('FLASK_ENV', 'development'))
+app = create_app()
 
 print("🚀 Loading ML model...")
 load_model_once(os.path.join(os.path.dirname(__file__), "model", "orange_mtl_model.keras"))
