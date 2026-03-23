@@ -457,7 +457,7 @@ export default function AnalyzePage() {
               cursor: 'none',
             }}
           >
-            <input {...getInputProps()} />
+            <input {...getInputProps()} title="Upload orange image" aria-label="Upload orange image" />
 
             {preview ? (
               <div className="mb-4">

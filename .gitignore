@@ -1,5 +1,5 @@
 # ============================================
-# Dr. Orange — Root .gitignore
+# Dr. Orange AI 🍊 — Production .gitignore
 # ============================================
 
 # ---- OS & Editor ----
@@ -11,7 +11,13 @@ Thumbs.db
 *.swo
 *~
 
-# ---- Dataset (very large — do NOT push) ----
+# ---- Environment Variables (VERY IMPORTANT) ----
+.env
+.env.*
+backend/.env
+frontend/.env.local
+
+# ---- Dataset (VERY LARGE - NEVER PUSH) ----
 Ornage disease dataset/
 
 # ---- Python ----
@@ -23,24 +29,23 @@ __pycache__/
 dist/
 build/
 *.egg
+*.sqlite3
 
-# ---- Virtual environments ----
+# ---- Virtual Environments ----
 venv/
 env/
 .venv/
-.env
 
 # ---- Backend ----
-backend/.env
 backend/instance/
 backend/uploads/
 backend/reports/
 backend/__pycache__/
 backend/routes/__pycache__/
 backend/model/__pycache__/
-backend/dr_orange.db
+backend/*.db
 
-# ---- ML Model (too large for GitHub — use Git LFS or download separately) ----
+# ---- ML Models (TOO LARGE FOR GITHUB) ----
 backend/model/*.keras
 backend/model/*.h5
 *.keras
@@ -54,10 +59,15 @@ ml/training_log.csv
 # ---- Frontend ----
 frontend/node_modules/
 frontend/.next/
-frontend/.env.local
-frontend/build_output.txt
+frontend/out/
 
-# ---- Misc ----
+# ---- Logs ----
 *.log
+
+# ---- Optional / AI / Tooling ----
 .antigravityignore
 .gemini/
+
+# ---- Git safety ----
+*.pem
+*.key

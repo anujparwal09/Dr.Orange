@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import OrangeLogo from './OrangeLogo';
 import { useAuth } from '@/app/context/AuthContext';
+import './Navbar.css';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -41,26 +42,17 @@ export default function Navbar() {
     <>
       {/* Progress bar */}
       <div
-        className="fixed top-0 left-0 right-0 z-[10001]"
+        className="nav-progress"
         style={{
-          height: 2,
-          background: 'linear-gradient(90deg,var(--orange),var(--orange-red))',
           transform: showProgress ? 'scaleX(1)' : 'scaleX(0)',
-          transformOrigin: 'left',
-          transition: 'transform .3s',
         }}
       />
 
       <nav
-        className="fixed top-0 left-0 right-0 z-[100] flex items-center justify-between"
+        className="navbar"
         style={{
-          padding: '0 40px',
           height: scrolled ? 64 : 72,
           background: scrolled ? 'rgba(7,7,7,0.95)' : 'rgba(7,7,7,0.8)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid var(--border)',
-          transition: 'all .3s',
         }}
       >
         {/* Logo */}
@@ -74,18 +66,16 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="relative text-sm font-medium no-underline transition-colors duration-200"
+              className="nav-link"
               style={{
                 color: pathname === link.href ? 'var(--orange)' : 'var(--muted)',
-                letterSpacing: '.3px',
               }}
             >
               {link.label}
               <span
-                className="absolute -bottom-1 left-0 h-px transition-all duration-300"
+                className="nav-link-underline"
                 style={{
                   width: pathname === link.href ? '100%' : '0',
-                  background: 'var(--orange)',
                 }}
               />
             </Link>
@@ -93,18 +83,16 @@ export default function Navbar() {
           {isAuthenticated && user?.role === 'admin' && (
             <Link
               href="/admin"
-              className="relative text-sm font-medium no-underline transition-colors duration-200"
+              className="nav-link"
               style={{
                 color: pathname === '/admin' ? 'var(--orange)' : 'var(--muted)',
-                letterSpacing: '.3px',
               }}
             >
               Admin
               <span
-                className="absolute -bottom-1 left-0 h-px transition-all duration-300"
+                className="nav-link-underline"
                 style={{
                   width: pathname === '/admin' ? '100%' : '0',
-                  background: 'var(--orange)',
                 }}
               />
             </Link>
@@ -119,20 +107,10 @@ export default function Navbar() {
                 Hello, {user.name}
               </span>
               <button
+                type="button"
                 onClick={logout}
-                className="hidden md:block no-underline"
-                style={{
-                  background: 'transparent',
-                  border: '1px solid var(--border2)',
-                  color: 'var(--muted)',
-                  padding: '8px 20px',
-                  borderRadius: 8,
-                  fontSize: 13,
-                  fontWeight: 500,
-                  fontFamily: 'var(--font-dm), sans-serif',
-                  transition: 'all .2s',
-                  cursor: 'none',
-                }}
+                className="nav-button-logout hidden md:block"
+                title="Logout"
               >
                 Logout
               </button>
@@ -141,37 +119,13 @@ export default function Navbar() {
             <>
               <Link
                 href="/login"
-                className="hidden md:block no-underline"
-                style={{
-                  background: 'transparent',
-                  border: '1px solid var(--border2)',
-                  color: 'var(--orange)',
-                  padding: '8px 20px',
-                  borderRadius: 8,
-                  fontSize: 13,
-                  fontWeight: 500,
-                  fontFamily: 'var(--font-dm), sans-serif',
-                  transition: 'all .2s',
-                  cursor: 'none',
-                }}
+                className="nav-button-login hidden md:block no-underline"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="hidden md:block no-underline"
-                style={{
-                  background: 'linear-gradient(135deg,var(--orange),var(--orange-red))',
-                  color: '#fff',
-                  padding: '8px 22px',
-                  borderRadius: 8,
-                  fontSize: 13,
-                  fontWeight: 600,
-                  border: 'none',
-                  fontFamily: 'var(--font-dm), sans-serif',
-                  transition: 'all .2s',
-                  cursor: 'none',
-                }}
+                className="nav-button-signup hidden md:block no-underline"
               >
                 Sign Up
               </Link>
@@ -180,13 +134,15 @@ export default function Navbar() {
 
           {/* Hamburger */}
           <button
-            className="flex md:hidden flex-col gap-[5px] bg-transparent border-none p-1"
-            style={{ cursor: 'none' }}
+            type="button"
+            className="hamburger-button flex md:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
+            title="Toggle Menu"
+            aria-label="Toggle Menu"
           >
-            <span className="block w-6 h-0.5 transition-all duration-300" style={{ background: 'var(--cream)' }} />
-            <span className="block w-6 h-0.5 transition-all duration-300" style={{ background: 'var(--cream)' }} />
-            <span className="block w-6 h-0.5 transition-all duration-300" style={{ background: 'var(--cream)' }} />
+            <span className="hamburger-line" />
+            <span className="hamburger-line" />
+            <span className="hamburger-line" />
           </button>
         </div>
       </nav>
@@ -197,17 +153,13 @@ export default function Navbar() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
-          className="fixed top-[72px] left-0 right-0 z-[99] md:hidden flex flex-col gap-5 p-6"
-          style={{
-            background: 'rgba(7,7,7,0.98)',
-            borderBottom: '1px solid var(--border)',
-          }}
+          className="mobile-menu md:hidden"
         >
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium no-underline"
+              className="mobile-nav-link"
               style={{
                 color: pathname === link.href ? 'var(--orange)' : 'var(--muted)',
               }}
@@ -223,12 +175,10 @@ export default function Navbar() {
                   Hello, {user.name}
                 </span>
                 <button
+                  type="button"
                   onClick={logout}
-                  className="w-full text-left"
-                  style={{
-                    color: 'var(--muted)',
-                    fontSize: 13,
-                  }}
+                  className="mobile-logout-button"
+                  title="Logout"
                 >
                   Logout
                 </button>
@@ -237,31 +187,14 @@ export default function Navbar() {
               <div className="flex gap-3 mt-2">
                 <Link
                   href="/login"
-                  className="no-underline"
-                  style={{
-                    background: 'transparent',
-                    border: '1px solid var(--border2)',
-                    color: 'var(--orange)',
-                    padding: '8px 20px',
-                    borderRadius: 8,
-                    fontSize: 13,
-                    fontWeight: 500,
-                  }}
+                  className="nav-button-login no-underline"
                   onClick={() => setMenuOpen(false)}
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="no-underline"
-                  style={{
-                    background: 'linear-gradient(135deg,var(--orange),var(--orange-red))',
-                    color: '#fff',
-                    padding: '8px 22px',
-                    borderRadius: 8,
-                    fontSize: 13,
-                    fontWeight: 600,
-                  }}
+                  className="nav-button-signup no-underline"
                   onClick={() => setMenuOpen(false)}
                 >
                   Sign Up

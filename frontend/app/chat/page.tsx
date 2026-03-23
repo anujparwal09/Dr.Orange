@@ -621,6 +621,8 @@ export default function ChatPage() {
                 ref={fileInputRef}
                 onChange={handleImageChange}
                 className="hidden"
+                title="Upload image"
+                aria-label="Upload image"
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
