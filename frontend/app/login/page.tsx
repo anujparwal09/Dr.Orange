@@ -44,7 +44,7 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
+      const res = await axios.post('/api/auth/google', {
         credential: response.credential,
       });
       login(res.data.data.token, res.data.data.user);
@@ -100,7 +100,7 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg('');
     try {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, { email, password });
+      const res = await axios.post('/api/auth/login', { email, password });
       login(res.data.data.token, res.data.data.user);
       router.push('/dashboard');
     } catch (err: any) {
