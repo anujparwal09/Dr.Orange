@@ -435,6 +435,7 @@ export default function DashboardPage() {
               </span>
               <div className="flex gap-2">
                 <button
+                  type="button"
                   onClick={() => setSelectedScan(row)}
                   className="text-[11px] transition-all duration-200 hover:bg-[rgba(255,140,0,0.15)]"
                   style={{
@@ -477,6 +478,8 @@ export default function DashboardPage() {
               }}
             >
               <button
+                type="button"
+                aria-label="Close"
                 onClick={() => setSelectedScan(null)}
                 className="absolute top-4 right-4 flex items-center justify-center rounded-full hover:bg-[rgba(255,255,255,0.1)] transition-colors p-1"
               >
