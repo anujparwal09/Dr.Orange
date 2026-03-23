@@ -1,0 +1,3 @@
+[submodule "dr-orange-model"]
+	path = dr-orange-model
+	url = https://github.com/anujparwal09/dr-orange-model.git
