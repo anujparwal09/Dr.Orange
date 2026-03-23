@@ -180,7 +180,6 @@ export default function AboutPage() {
           <div>
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-cream mb-4">Connect</div>
             <a href="https://github.com/anujparwal09/Dr.Orange" target="_blank" rel="noreferrer" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)' }}>GitHub</a>
-            <a href="#" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>Twitter</a>
           </div>
         </div>
         <div className="flex items-center justify-between pt-7" style={{ borderTop: '1px solid var(--border)' }}>
