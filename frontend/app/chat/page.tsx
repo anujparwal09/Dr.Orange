@@ -20,7 +20,7 @@ interface ChatSession {
 }
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:5000';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
 
 const SUGGESTIONS = [
   'What causes Citrus Canker?',

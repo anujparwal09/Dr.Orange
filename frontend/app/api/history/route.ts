@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   try {
-    const apiUrl = process.env.FLASK_API_URL || 'http://localhost:5000';
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
     const token = request.headers.get('Authorization') || '';
 
-    const response = await fetch(`${apiUrl}/history`, {
+    const response = await fetch(`${apiUrl}/api/history`, {
       method: 'GET',
       headers: {
         Authorization: token,
