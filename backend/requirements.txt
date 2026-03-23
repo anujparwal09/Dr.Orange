@@ -19,3 +19,5 @@ gunicorn==22.0.0
 email-validator==2.1.1
 psycopg2-binary==2.9.9
 requests==2.32.3
+
+huggingface_hub

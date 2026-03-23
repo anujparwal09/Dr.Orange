@@ -2,12 +2,20 @@ import io
 import os
 import numpy as np
 from PIL import Image
+from huggingface_hub import hf_hub_download
 
 # ==============================
 # GLOBAL MODEL
 # ==============================
 model = None
 model_loaded = False
+
+# ==============================
+# CONFIG
+# ==============================
+HF_REPO_ID = "anujparwal09/dr-orange-model"
+MODEL_FILENAME = "orange_mtl_model.keras"
+LOCAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), MODEL_FILENAME)
 
 # ==============================
 # CLASS LABELS (MUST MATCH TRAINING)
@@ -24,30 +32,34 @@ DISEASE_CLASSES = [
 RIPENESS_CLASSES = ["Unripe", "Near_Ripe", "Ripe", "Overripe"]
 
 # ==============================
-# LOAD MODEL (ONLY ONCE)
+# LOAD MODEL (AUTO DOWNLOAD)
 # ==============================
-def load_model_once(model_path: str = None) -> bool:
+def load_model_once():
     global model, model_loaded
 
     try:
         import tensorflow as tf
 
-        # Default path (auto-detect inside backend/model/)
-        if model_path is None:
-            model_path = os.path.join(
-                os.path.dirname(__file__),
-                "orange_mtl_model.keras"
+        # 📥 Download from Hugging Face if not exists
+        if not os.path.exists(LOCAL_MODEL_PATH):
+            print("⬇️ Downloading model from Hugging Face...")
+
+            model_file = hf_hub_download(
+                repo_id=HF_REPO_ID,
+                filename=MODEL_FILENAME
             )
 
+            os.makedirs(os.path.dirname(LOCAL_MODEL_PATH), exist_ok=True)
+            os.replace(model_file, LOCAL_MODEL_PATH)
+
+            print("✅ Model downloaded")
+
+        # 🚀 Load model
         if model is None:
             print("🚀 Loading ML model...")
-            model = tf.keras.models.load_model(model_path)
+            model = tf.keras.models.load_model(LOCAL_MODEL_PATH)
             model_loaded = True
-            print(f"✅ Model loaded from {model_path}")
-
-    except FileNotFoundError:
-        print("⚠️ Model not found — using mock predictions")
-        model_loaded = False
+            print("✅ Model loaded successfully")
 
     except Exception as e:
         print(f"❌ Model load error: {e}")
@@ -67,11 +79,10 @@ def preprocess_image(image_bytes: bytes) -> np.ndarray:
 
     img_array = np.array(img, dtype=np.float32)
 
-    # 🔥 IMPORTANT: MobileNetV2 preprocessing
+    # MobileNetV2 preprocessing
     img_array = tf.keras.applications.mobilenet_v2.preprocess_input(img_array)
 
-    img_array = np.expand_dims(img_array, axis=0)
-    return img_array
+    return np.expand_dims(img_array, axis=0)
 
 
 # ==============================
@@ -82,9 +93,10 @@ def real_predict(image_bytes: bytes) -> dict:
 
     try:
         img_array = preprocess_image(image_bytes)
+
         outputs = model.predict(img_array, verbose=0)
 
-        # Handle MTL outputs (dict OR list)
+        # Handle MTL outputs
         if isinstance(outputs, dict):
             disease_probs  = outputs["disease"][0]
             quality_raw    = float(outputs["quality_score"][0][0])
@@ -101,7 +113,9 @@ def real_predict(image_bytes: bytes) -> dict:
         # ==============================
         disease_idx = int(np.argmax(disease_probs))
         disease = DISEASE_CLASSES[disease_idx]
-        disease_confidence = float(disease_probs[disease_idx]) * 100
+        confidence = float(disease_probs[disease_idx]) * 100
+
+        print(f"🔍 Prediction: {disease} ({confidence:.2f}%)")
 
         all_probabilities = {
             cls: round(float(p) * 100, 2)
@@ -111,15 +125,12 @@ def real_predict(image_bytes: bytes) -> dict:
         # ==============================
         # QUALITY
         # ==============================
-        quality_score = round(float(quality_raw) * 9 + 1, 1)
-        quality_score = float(np.clip(quality_score, 1.0, 10.0))
+        quality_score = float(np.clip(quality_raw * 9 + 1, 1, 10))
 
         # ==============================
         # SHELF LIFE
         # ==============================
-        shelf_life_days = int(round(float(shelf_raw) * 30))
-        shelf_life_days = int(np.clip(shelf_life_days, 1, 30))
-
+        shelf_life_days = int(np.clip(round(shelf_raw * 30), 1, 30))
         estimated_age_days = max(1, 30 - shelf_life_days)
 
         # ==============================
@@ -133,19 +144,16 @@ def real_predict(image_bytes: bytes) -> dict:
             for cls, p in zip(RIPENESS_CLASSES, ripeness_probs)
         }
 
-        # ==============================
-        # FINAL RESPONSE
-        # ==============================
         return {
             "disease": disease,
-            "disease_confidence": round(disease_confidence, 2),
+            "disease_confidence": round(confidence, 2),
             "all_probabilities": all_probabilities,
-            "quality_score": quality_score,
+            "quality_score": round(quality_score, 2),
             "shelf_life_days": shelf_life_days,
             "estimated_age_days": estimated_age_days,
             "ripeness_stage": ripeness_stage,
             "ripeness_probabilities": ripeness_probabilities,
-            "model_used": "local_mtl"
+            "model_used": "ml_model"
         }
 
     except Exception as e:
@@ -156,7 +164,9 @@ def real_predict(image_bytes: bytes) -> dict:
 # ==============================
 # MOCK FALLBACK
 # ==============================
-def mock_predict() -> dict:
+def mock_predict():
+    print("⚠️ Using fallback prediction")
+
     return {
         "disease": "Citrus_Canker",
         "disease_confidence": 94.2,
@@ -186,6 +196,9 @@ def mock_predict() -> dict:
 # MAIN ENTRY FUNCTION
 # ==============================
 def get_prediction(image_bytes: bytes) -> dict:
+    if not model_loaded:
+        load_model_once()
+
     if model_loaded:
         return real_predict(image_bytes)
     else:
