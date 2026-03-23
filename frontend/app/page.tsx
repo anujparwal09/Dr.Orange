@@ -631,7 +631,7 @@ export default function HomePage() {
             <div className="text-sm leading-[1.8]" style={{ color: 'var(--muted)' }}>
               <span className="text-cream font-medium">Anuj Parwal</span> <span className="text-xs">(Full Stack Developer)</span><br />
               <div className="mt-2.5 flex flex-col gap-2">
-                <a href="https://github.com/anujparwal09" target="_blank" rel="noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block" style={{ color: 'var(--muted)' }}>GitHub Profile</a>
+                <a href="https://github.com/anujparwal09/Dr.Orange" target="_blank" rel="noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block" style={{ color: 'var(--muted)' }}>GitHub Repository</a>
                 <a href="https://www.linkedin.com/in/anuj-parwal-805829283/" target="_blank" rel="noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block" style={{ color: 'var(--muted)' }}>LinkedIn Profile</a>
                 <span className="text-[13px] block mt-0.5">Phone: +91-9579944504</span>
               </div>
