@@ -4,10 +4,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+    const authHeader = request.headers.get('authorization') || '';
 
     const response = await fetch(`${apiUrl}/api/chat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: authHeader,
+      },
       body: JSON.stringify(body),
     });
 

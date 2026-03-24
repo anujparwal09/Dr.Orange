@@ -4,9 +4,13 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+    const authHeader = request.headers.get('authorization') || '';
 
     const response = await fetch(`${apiUrl}/api/predict`, {
       method: 'POST',
+      headers: {
+        Authorization: authHeader,
+      },
       body: formData,
     });
 
