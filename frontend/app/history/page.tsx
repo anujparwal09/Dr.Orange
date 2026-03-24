@@ -34,7 +34,7 @@ export default function HistoryPage() {
 
   const fetchScans = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/user/scans`, {
+      const res = await axios.get('/api/history', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setScans(res.data.scans || []);

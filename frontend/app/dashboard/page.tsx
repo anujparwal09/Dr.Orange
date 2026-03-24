@@ -86,7 +86,7 @@ export default function DashboardPage() {
     if (!token) return;
       const fetchData = async () => {
         try {
-          const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/api/history`, {
+          const res = await axios.get('/api/history', {
             headers: { Authorization: `Bearer ${token}` }
           });
           const data = res.data;
