@@ -53,7 +53,7 @@ def load_model_once(model_path: str = None):
     global model, model_loaded
 
     if model_loaded and model is not None:
-        logging.info("Model already loaded — skipping")
+        logging.info("✅ Model already loaded — skipping")
         return True
 
     import tensorflow as tf
@@ -65,10 +65,13 @@ def load_model_once(model_path: str = None):
         or LOCAL_MODEL_PATH
     )
 
+    logging.info(f"🔍 Resolved model path: {resolved_path}")
+    logging.info(f"📂 Checking if file exists at: {resolved_path}")
+
     # ── Download from Hugging Face if file is missing ──────────────────────
     if not os.path.exists(resolved_path):
-        logging.info(f"Model not found at {resolved_path}")
-        logging.info("⬇️  Downloading from Hugging Face...")
+        logging.info(f"⚠️  Model not found at {resolved_path}")
+        logging.info(f"⬇️  Attempting download from HuggingFace: {HF_REPO_ID}/{MODEL_FILENAME}")
 
         try:
             from huggingface_hub import hf_hub_download
@@ -86,13 +89,14 @@ def load_model_once(model_path: str = None):
                 shutil.copy2(downloaded_path, resolved_path)
 
             logging.info(f"✅ Model downloaded to: {resolved_path}")
+            logging.info(f"📊 File size: {os.path.getsize(resolved_path) / (1024*1024):.1f} MB")
 
         except Exception as e:
-            logging.error(f"❌ Hugging Face download failed: {e}")
+            logging.error(f"❌ Hugging Face download failed: {type(e).__name__}: {e}")
             model_loaded = False
             return False
 
-    # ── Load the model ─────────────────────────────────────────────────────
+    # ── Verify file exists before loading ────────────────────────────────
     if not os.path.exists(resolved_path):
         logging.error(f"❌ Model file still missing after download attempt: {resolved_path}")
         model_loaded = False
@@ -100,17 +104,21 @@ def load_model_once(model_path: str = None):
 
     try:
         file_mb = os.path.getsize(resolved_path) / (1024 * 1024)
-        logging.info(f"🚀 Loading model: {resolved_path} ({file_mb:.1f} MB)")
+        logging.info(f"🚀 Loading Keras model: {resolved_path} ({file_mb:.1f} MB)...")
 
         model = tf.keras.models.load_model(resolved_path)
         model_loaded = True
 
         output_names = [o.name for o in model.outputs]
-        logging.info(f"✅ Model loaded — outputs: {output_names}")
+        logging.info(f"✅ Model successfully loaded")
+        logging.info(f"📊 Model outputs: {output_names}")
+        logging.info(f"📐 Input shape: {model.input_shape}")
         return True
 
     except Exception as e:
-        logging.error(f"❌ Model load failed: {e}")
+        logging.error(f"❌ Model load failed: {type(e).__name__}: {e}")
+        import traceback
+        logging.error(f"Traceback: {traceback.format_exc()}")
         model_loaded = False
         return False
 

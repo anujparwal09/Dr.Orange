@@ -75,12 +75,34 @@ def create_app(config_name=None):
 
     @app.route('/health')
     def health():
-        from model.model_loader import model_loaded
+        from model.model_loader import model_loaded, load_model_once
+        
+        # Try to ensure model is loaded
+        model_status = "unknown"
+        model_error = None
+        
+        try:
+            if not model_loaded:
+                logging.info("Health check: Attempting to load model...")
+                load_model_once()
+            
+            if model_loaded:
+                model_status = "loaded"
+            else:
+                model_status = "failed_to_load"
+                model_error = "Model loading returned False"
+        except Exception as e:
+            model_status = "error"
+            model_error = str(e)
+            logging.error(f"Health check model load error: {e}")
+        
         return jsonify({
             "status": "ok",
             "model_loaded": model_loaded,
+            "model_status": model_status,
+            "model_error": model_error,
             "timestamp": datetime.utcnow().isoformat()
-        }), 200
+        }), 200 if model_loaded else 503
 
     @app.errorhandler(404)
     def not_found(e):
@@ -88,7 +110,24 @@ def create_app(config_name=None):
 
     @app.errorhandler(500)
     def server_error(e):
-        return jsonify({"error": "Internal server error", "code": "INTERNAL_ERROR"}), 500
+        import traceback
+        logging.error(f"500 Error: {e}")
+        logging.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({
+            "error": "Internal server error", 
+            "code": "INTERNAL_ERROR",
+            "details": str(e) if app.debug else "Server error occurred"
+        }), 500
+    
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        import traceback
+        logging.error(f"Unhandled exception: {type(e).__name__}: {e}")
+        logging.error(f"Traceback: {traceback.format_exc()}")
+        return jsonify({
+            "error": f"Error: {str(e)}", 
+            "code": "SERVER_ERROR"
+        }), 500
 
     return app
 

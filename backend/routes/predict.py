@@ -78,8 +78,18 @@ def predict():
         # ==============================
         # LOAD MODEL (ONCE)
         # ==============================
-        logger.info("🔨 Loading model...")
-        load_model_once()
+        try:
+            logger.info("🔨 Loading model...")
+            model_loaded = load_model_once()
+            
+            if not model_loaded:
+                error_msg = "Failed to load ML model. Please try again in a few moments."
+                logger.error(f"❌ {error_msg}")
+                raise Exception(error_msg)
+                
+        except Exception as model_err:
+            logger.error(f"❌ Model loading error: {type(model_err).__name__}: {str(model_err)}")
+            raise Exception(f"Model loading failed: {str(model_err)}")
 
         # ==============================
         # READ IMAGE
