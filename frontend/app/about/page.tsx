@@ -36,14 +36,13 @@ export default function AboutPage() {
   return (
     <div className="relative z-[2]">
       {/* Hero */}
-      <div className="text-center relative z-[2]" style={{ padding: '140px 40px 80px' }}>
+      <div className="text-center relative z-[2] pt-[140px] px-10 pb-20">
         <motion.span
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="font-mono text-[11px] uppercase tracking-[3px] block mb-3.5"
-          style={{ color: 'var(--orange)' }}
+          className="font-mono text-[11px] uppercase tracking-[3px] block mb-3.5 text-orange-custom"
         >
           The Mission
         </motion.span>
@@ -53,11 +52,10 @@ export default function AboutPage() {
           whileInView="visible"
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
-          className="font-playfair font-bold max-w-[700px] mx-auto mb-5"
-          style={{ fontSize: 'clamp(40px,5vw,64px)' }}
+          className="font-playfair font-bold max-w-[700px] mx-auto mb-5 text-[clamp(40px,5vw,64px)]"
         >
           Built for India&apos;s<br />
-          <span style={{ color: 'var(--orange)' }}>Orange Farmers</span>
+          <span className="text-orange-custom">Orange Farmers</span>
         </motion.h2>
         <motion.p
           variants={fadeUp}
@@ -65,8 +63,7 @@ export default function AboutPage() {
           whileInView="visible"
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="text-[17px] max-w-[580px] mx-auto leading-[1.75]"
-          style={{ color: 'var(--muted)' }}
+          className="text-[17px] max-w-[580px] mx-auto leading-[1.75] text-muted"
         >
           Dr. Orange solves a real agricultural problem — invisible early-stage diseases,
           subjective manual grading, and 30% post-harvest waste — with a Multi-Task Learning
@@ -76,16 +73,7 @@ export default function AboutPage() {
 
       {/* About grid */}
       <div
-        className="overflow-hidden"
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2,1fr)',
-          gap: 1,
-          margin: '60px 40px',
-          background: 'var(--border)',
-          borderRadius: 24,
-          border: '1px solid var(--border)',
-        }}
+        className="overflow-hidden grid grid-cols-2 gap-px my-[60px] mx-10 bg-border-custom border-border-custom rounded-[24px]"
       >
         {aboutCards.map((card, i) => (
           <motion.div
@@ -95,13 +83,12 @@ export default function AboutPage() {
             whileInView="visible"
             viewport={{ once: true }}
             transition={{ delay: i * 0.1, duration: 0.7 }}
-            className="transition-colors duration-300"
-            style={{ background: 'var(--bg2)', padding: 44 }}
+            className="transition-colors duration-300 bg-bg2 p-11"
           >
             <div className="font-playfair text-[22px] font-bold mb-3.5 text-cream">
               {card.title}
             </div>
-            <div className="text-[15px] leading-[1.75]" style={{ color: 'var(--muted)' }}>
+            <div className="text-[15px] leading-[1.75] text-muted">
               {card.text}
             </div>
           </motion.div>
@@ -109,10 +96,9 @@ export default function AboutPage() {
       </div>
 
       {/* Tech stack */}
-      <div className="relative z-[2]" style={{ padding: '60px 40px' }}>
+      <div className="relative z-[2] px-10 py-[60px]">
         <span
-          className="font-mono text-[11px] uppercase tracking-[3px] block mb-3.5"
-          style={{ color: 'var(--orange)' }}
+          className="font-mono text-[11px] uppercase tracking-[3px] block mb-3.5 text-orange-custom"
         >
           Tech Stack
         </span>
@@ -126,15 +112,7 @@ export default function AboutPage() {
                 color: 'var(--orange)',
                 background: 'rgba(255,140,0,0.08)',
               }}
-              className="font-mono text-xs transition-all duration-250"
-              style={{
-                background: 'var(--glass)',
-                border: '1px solid var(--border)',
-                padding: '8px 18px',
-                borderRadius: 40,
-                color: 'var(--muted)',
-                cursor: 'none',
-              }}
+              className="font-mono text-xs transition-all duration-250 bg-[var(--glass)] border-border-custom py-2 px-[18px] rounded-[40px] text-muted cursor-none-custom"
             >
               {pill}
             </motion.span>
@@ -144,49 +122,39 @@ export default function AboutPage() {
 
       {/* Footer */}
       <footer
-        className="relative z-[2]"
-        style={{
-          background: 'rgba(0,0,0,0.5)',
-          borderTop: '1px solid var(--border)',
-          padding: '60px 40px 40px',
-        }}
+        className="relative z-[2] bg-[rgba(0,0,0,0.5)] border-t-border-custom px-10 pt-[60px] pb-10"
       >
         <div
-          className="mb-12"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1.5fr 1fr 1fr 1fr',
-            gap: 40,
-          }}
+          className="mb-12 grid grid-cols-[1.5fr_1fr_1fr_1fr] gap-10"
         >
           <div>
             <OrangeLogo size={32} showText={true} textSize="20px" />
-            <p className="text-sm leading-[1.7] mt-4 max-w-[240px]" style={{ color: 'var(--muted)' }}>
+            <p className="text-sm leading-[1.7] mt-4 max-w-[240px] text-muted">
               AI-powered orange health diagnostics for India&apos;s farmers.
             </p>
           </div>
           <div>
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-cream mb-4">Product</div>
-            <Link href="/analyze" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>Analyzer</Link>
-            <Link href="/dashboard" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>Dashboard</Link>
-            <Link href="/chat" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>AI Chat</Link>
+            <Link href="/analyze" className="block text-sm no-underline mb-2.5 text-muted cursor-none-custom">Analyzer</Link>
+            <Link href="/dashboard" className="block text-sm no-underline mb-2.5 text-muted cursor-none-custom">Dashboard</Link>
+            <Link href="/chat" className="block text-sm no-underline mb-2.5 text-muted cursor-none-custom">AI Chat</Link>
           </div>
           <div>
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-cream mb-4">Company</div>
-            <a href="#" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>Research</a>
-            <a href="#" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>Blog</a>
-            <a href="#" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)', cursor: 'none' }}>Contact</a>
+            <a href="#" className="block text-sm no-underline mb-2.5 text-muted cursor-none-custom">Research</a>
+            <a href="#" className="block text-sm no-underline mb-2.5 text-muted cursor-none-custom">Blog</a>
+            <a href="#" className="block text-sm no-underline mb-2.5 text-muted cursor-none-custom">Contact</a>
           </div>
           <div>
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-cream mb-4">Connect</div>
-            <a href="https://github.com/anujparwal09/Dr.Orange" target="_blank" rel="noreferrer" className="block text-sm no-underline mb-2.5" style={{ color: 'var(--muted)' }}>GitHub</a>
+            <a href="https://github.com/anujparwal09/Dr.Orange" target="_blank" rel="noopener noreferrer" className="block text-sm no-underline mb-2.5 text-muted">GitHub</a>
           </div>
         </div>
-        <div className="flex items-center justify-between pt-7" style={{ borderTop: '1px solid var(--border)' }}>
-          <div className="text-[13px]" style={{ color: 'var(--muted)' }}>
+        <div className="flex items-center justify-between pt-7 border-t-border-custom">
+          <div className="text-[13px] text-muted">
             © 2025 <span className="text-orange-primary">Dr. Orange</span> — Made with ❤️ for Indian Agriculture
           </div>
-          <div className="font-mono text-[11px] tracking-[2px]" style={{ color: 'rgba(255,140,0,0.4)' }}>
+          <div className="font-mono text-[11px] tracking-[2px] opacity-40 text-orange-custom">
             MBBS IN MELANOSE
           </div>
         </div>

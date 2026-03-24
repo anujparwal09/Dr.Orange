@@ -610,44 +610,42 @@ export default function HomePage() {
         >
           <div>
             <OrangeLogo size={32} showText={true} textSize="20px" />
-            <p className="text-sm leading-[1.7] mt-4 max-w-[240px]" style={{ color: 'var(--muted)' }}>
+            <p className="text-sm leading-[1.7] mt-4 max-w-[240px] text-muted">
               AI-powered orange health diagnostics for India&apos;s farmers. Built with ❤️ for Indian agriculture.
             </p>
           </div>
           <div>
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-cream mb-4">Product</div>
-            <Link href="/analyze" className="block text-sm no-underline mb-2.5 transition-colors" style={{ color: 'var(--muted)', cursor: 'none' }}>Analyzer</Link>
-            <Link href="/dashboard" className="block text-sm no-underline mb-2.5 transition-colors" style={{ color: 'var(--muted)', cursor: 'none' }}>Dashboard</Link>
-            <Link href="/chat" className="block text-sm no-underline mb-2.5 transition-colors" style={{ color: 'var(--muted)', cursor: 'none' }}>AI Chat</Link>
+            <Link href="/analyze" className="block text-sm no-underline mb-2.5 transition-colors text-muted cursor-none-custom">Analyzer</Link>
+            <Link href="/dashboard" className="block text-sm no-underline mb-2.5 transition-colors text-muted cursor-none-custom">Dashboard</Link>
+            <Link href="/chat" className="block text-sm no-underline mb-2.5 transition-colors text-muted cursor-none-custom">AI Chat</Link>
           </div>
           <div>
             <div className="font-mono text-xs font-semibold uppercase tracking-wider text-cream mb-4">Company</div>
-            <Link href="/about" className="block text-sm no-underline mb-2.5 transition-colors" style={{ color: 'var(--muted)', cursor: 'none' }}>About</Link>
-            <a href="#" className="block text-sm no-underline mb-2.5 transition-colors" style={{ color: 'var(--muted)', cursor: 'none' }}>Research</a>
-            <a href="#" className="block text-sm no-underline mb-2.5 transition-colors" style={{ color: 'var(--muted)', cursor: 'none' }}>Blog</a>
+            <Link href="/about" className="block text-sm no-underline mb-2.5 transition-colors text-muted cursor-none-custom">About</Link>
+            <a href="#" className="block text-sm no-underline mb-2.5 transition-colors text-muted cursor-none-custom">Research</a>
+            <a href="#" className="block text-sm no-underline mb-2.5 transition-colors text-muted cursor-none-custom">Blog</a>
           </div>
           <div>
             <div className="font-mono text-[13px] font-semibold uppercase tracking-wider text-orange-primary mb-4">Built By</div>
-            <div className="text-sm leading-[1.8]" style={{ color: 'var(--muted)' }}>
+            <div className="text-sm leading-[1.8] text-muted">
               <span className="text-cream font-medium">Anuj Parwal</span> <span className="text-xs">(Full Stack Developer)</span><br />
               <div className="mt-2.5 flex flex-col gap-2">
-                <a href="https://github.com/anujparwal09/Dr.Orange" target="_blank" rel="noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block" style={{ color: 'var(--muted)' }}>GitHub Repository</a>
-                <a href="https://www.linkedin.com/in/anuj-parwal-805829283/" target="_blank" rel="noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block" style={{ color: 'var(--muted)' }}>LinkedIn Profile</a>
+                <a href="https://github.com/anujparwal09/Dr.Orange" target="_blank" rel="noopener noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block text-muted">GitHub Repository</a>
+                <a href="https://www.linkedin.com/in/anuj-parwal-805829283/" target="_blank" rel="noopener noreferrer" className="no-underline text-[13px] hover:text-orange-primary transition-colors block text-muted">LinkedIn Profile</a>
                 <span className="text-[13px] block mt-0.5">Phone: +91-9579944504</span>
               </div>
             </div>
           </div>
         </div>
         <div
-          className="flex items-center justify-between pt-7"
-          style={{ borderTop: '1px solid var(--border)' }}
+          className="flex items-center justify-between pt-7 border-t-border-custom"
         >
-          <div className="text-[13px]" style={{ color: 'var(--muted)' }}>
+          <div className="text-[13px] text-muted">
             © 2025 <span className="text-orange-primary">Dr. Orange</span>
           </div>
           <div
-            className="font-mono text-[11px] tracking-[2px]"
-            style={{ color: 'rgba(255,140,0,0.4)' }}
+            className="font-mono text-[11px] tracking-[2px] opacity-40 text-orange-custom"
           >
             MBBS IN MELANOSE
           </div>

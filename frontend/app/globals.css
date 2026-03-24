@@ -77,3 +77,11 @@ body {
 @keyframes fall-3 { 0% { transform:translateY(-8vh) rotate(0deg) scale(1); } 100% { transform:translateY(108vh) rotate(200deg) scale(0.8); } }
 @keyframes fall-sway { 0%,100% { transform:translateX(0); } 50% { transform:translateX(20px); } }
 @keyframes fall-sway-rev { 0%,100% { transform:translateX(0); } 50% { transform:translateX(-20px); } }
+
+/* UTILITY CLASSES TO REPLACE INLINE STYLES */
+.text-muted { color: var(--muted); }
+.text-orange-custom { color: var(--orange); }
+.bg-bg2 { background: var(--bg2); }
+.border-border-custom { border: 1px solid var(--border); }
+.border-t-border-custom { border-top: 1px solid var(--border); }
+.cursor-none-custom { cursor: none; }

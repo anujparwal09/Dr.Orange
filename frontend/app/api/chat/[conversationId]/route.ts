@@ -32,9 +32,9 @@ export async function POST(request: NextRequest, { params }: { params: { convers
     const formData = await request.formData();
 
     const backendFormData = new FormData();
-    for (const [key, value] of formData.entries()) {
-      backendFormData.append(key, value as any);
-    }
+    formData.forEach((value, key) => {
+      backendFormData.append(key, value);
+    });
 
     const response = await fetch(`${apiUrl}/api/chat/${params.conversationId}`, {
       method: 'POST',
