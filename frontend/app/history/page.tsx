@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, FileImage, AlertTriangle, CheckCircle } from 'lucide-react';
 import axios from 'axios';
@@ -27,23 +27,43 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const tokenRef = useRef(token);
+
+  // Keep ref in sync so interval/event-listeners always use the latest token
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
 
   useEffect(() => {
     if (authLoading) {
       return;
     }
-    
-    const handler = () => {
-      if (token) {
-        fetchScans();
+
+    const fetchScans = async (currentToken: string | null = tokenRef.current) => {
+      if (!currentToken) return;
+      try {
+        const res = await axios.get(`/api/history?_t=${Date.now()}`, {
+          headers: { Authorization: `Bearer ${currentToken}` },
+        });
+        setScans(res.data.scans || []);
+        setLastUpdated(Date.now());
+        setElapsedSeconds(0);
+      } catch (err) {
+        console.error('Failed to fetch scans', err);
+      } finally {
+        setLoading(false);
       }
     };
 
     if (token) {
-      fetchScans();
+      fetchScans(token);
     } else {
       setLoading(false);
     }
+
+    const handler = () => {
+      fetchScans(tokenRef.current);
+    };
 
     const onStorage = (event: StorageEvent) => {
       if (event.key === 'dr_orange_last_scan') {
@@ -55,9 +75,7 @@ export default function HistoryPage() {
     window.addEventListener('storage', onStorage);
 
     const pollId = window.setInterval(() => {
-      if (token) {
-        fetchScans();
-      }
+      fetchScans(tokenRef.current);
     }, 12000);
 
     return () => {
@@ -74,21 +92,6 @@ export default function HistoryPage() {
     }, 1000);
     return () => window.clearInterval(timer);
   }, [lastUpdated]);
-
-  const fetchScans = async () => {
-    try {
-      const res = await axios.get('/api/history', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setScans(res.data.scans || []);
-      setLastUpdated(Date.now());
-      setElapsedSeconds(0);
-    } catch (err) {
-      console.error('Failed to fetch scans', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getDiseaseIcon = (disease: string) => {
     if (disease.toLowerCase().includes('healthy')) {

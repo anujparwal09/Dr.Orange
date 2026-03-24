@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, AlertTriangle, CheckCircle, Sun, X } from 'lucide-react';
 import {
@@ -84,16 +84,24 @@ export default function DashboardPage() {
   const [lastUpdated, setLastUpdated] = useState<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   
+  const tokenRef = useRef(token);
+
+  // Keep ref in sync so interval/event-listeners always use the latest token
+  useEffect(() => {
+    tokenRef.current = token;
+  }, [token]);
+
   useEffect(() => {
     // Wait for auth to finish loading AND have a token
     if (authLoading || !token) {
       return;
     }
     
-      const fetchData = async () => {
+      const fetchData = async (currentToken: string | null = tokenRef.current) => {
+        if (!currentToken) return;
         try {
-          const res = await axios.get('/api/history', {
-            headers: { Authorization: `Bearer ${token}` }
+          const res = await axios.get(`/api/history?_t=${Date.now()}`, {
+            headers: { Authorization: `Bearer ${currentToken}` }
           });
           const data = res.data;
           
@@ -179,11 +187,11 @@ export default function DashboardPage() {
       fetchData();
 
       const onScanUpdated = () => {
-        fetchData();
+        fetchData(tokenRef.current);
       };
       const onStorage = (event: StorageEvent) => {
         if (event.key === 'dr_orange_last_scan') {
-          fetchData();
+          fetchData(tokenRef.current);
         }
       };
 
@@ -191,9 +199,7 @@ export default function DashboardPage() {
       window.addEventListener('storage', onStorage);
 
       const pollId = window.setInterval(() => {
-        if (token) {
-          fetchData();
-        }
+        fetchData(tokenRef.current);
       }, 12000);
 
       return () => {
