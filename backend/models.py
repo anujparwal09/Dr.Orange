@@ -86,6 +86,7 @@ class Conversation(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     title = db.Column(db.String(255), default="New Chat")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     messages = db.relationship('ChatMessage', backref='conversation', lazy=True, cascade='all, delete-orphan')
 
@@ -94,7 +95,8 @@ class Conversation(db.Model):
             'id': self.id,
             'user_id': self.user_id,
             'title': self.title,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat(),
+            'updated_at': (self.updated_at or self.created_at).isoformat()
         }
 
 class ChatMessage(db.Model):

@@ -212,7 +212,7 @@ export default function ChatPage() {
   const fetchSessions = async () => {
     setLoadingSessions(true);
     try {
-      const res = await axios.get(`${API_BASE}/api/chat/conversations`, {
+      const res = await axios.get(`${API_BASE}/api/chat/conversations?_t=${Date.now()}`, {
         headers: authHeader(),
       });
       setSessions(res.data.conversations || []);
@@ -319,13 +319,21 @@ export default function ChatPage() {
         currentConvId = createRes.data.conversation?.id ?? null;
         if (currentConvId) {
           setActiveSession(currentConvId);
+          // Immediately add new session to sidebar so it appears right away
+          const newSession: ChatSession = createRes.data.conversation;
+          setSessions((prev) => [newSession, ...prev]);
+        } else {
+          // Could not create conversation — abort gracefully
+          throw new Error('Failed to create conversation');
         }
       }
 
-      // Send message to backend
-      const endpoint = currentConvId
-        ? `${API_BASE}/api/chat/${currentConvId}`
-        : `${API_BASE}/api/chat`;
+      // Send message to backend — always use conversation-specific endpoint
+      if (!currentConvId) {
+        throw new Error('No active conversation');
+      }
+
+      const endpoint = `${API_BASE}/api/chat/${currentConvId}`;
 
       const formData = new FormData();
       if (trimmed) formData.append('message', trimmed);
@@ -346,7 +354,7 @@ export default function ChatPage() {
       };
       setMessages((prev) => [...prev, botMsg]);
 
-      // Refresh sidebar
+      // Refresh sidebar to get updated title (backend updates title on first message)
       fetchSessions();
     } catch (err: unknown) {
       // Fallback response

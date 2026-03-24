@@ -12,6 +12,7 @@ export async function GET(request: NextRequest, { params }: { params: { conversa
       headers: {
         Authorization: authHeader,
       },
+      cache: 'no-store',
     });
 
     if (!response.ok) {
@@ -20,7 +21,9 @@ export async function GET(request: NextRequest, { params }: { params: { conversa
     }
 
     const data = await response.json();
-    return NextResponse.json(data);
+    return NextResponse.json(data, {
+      headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' },
+    });
   } catch (error) {
     console.error('Conversation GET API error:', error);
     return NextResponse.json({ error: 'Conversation service unavailable' }, { status: 500 });

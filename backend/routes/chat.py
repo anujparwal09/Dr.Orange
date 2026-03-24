@@ -48,7 +48,10 @@ FALLBACK_RESPONSES = {
 @jwt_required()
 def get_conversations():
     user_id = int(get_jwt_identity())
-    convs = Conversation.query.filter_by(user_id=user_id).order_by(Conversation.created_at.desc()).all()
+    convs = Conversation.query.filter_by(user_id=user_id).order_by(
+        Conversation.updated_at.desc().nullslast(),
+        Conversation.created_at.desc()
+    ).all()
     return jsonify({"conversations": [c.to_dict() for c in convs]}), 200
 
 @chat_bp.route('/conversation', methods=['POST'])
@@ -155,9 +158,11 @@ def chat_with_history(conversation_id):
             current_app.logger.error(f"Gemini API error: {e}", exc_info=True)
             reply = handle_fallback_text(message)
 
-    # Save to db
+    # Save to db & touch updated_at so conversation floats to top of sidebar
+    from datetime import datetime as _dt
     db_msg_text = message if message else "[Image Uploaded]"
     chat_msg = ChatMessage(conversation_id=conversation_id, user_id=user_id, message=db_msg_text, response=reply)
+    conv.updated_at = _dt.utcnow()
     db.session.add(chat_msg)
     db.session.commit()
 

@@ -73,6 +73,26 @@ def create_app(config_name=None):
             db.session.rollback()
             logging.warning(f"Migration skipped (table may not exist yet): {e}")
 
+        try:
+            from sqlalchemy import text, inspect
+            inspector = inspect(db.engine)
+            existing = inspector.get_table_names()
+            if 'conversations' in existing:
+                conv_cols = [col['name'] for col in inspector.get_columns('conversations')]
+                if 'updated_at' not in conv_cols:
+                    db.session.execute(text(
+                        "ALTER TABLE conversations ADD COLUMN updated_at DATETIME"
+                    ))
+                    # Back-fill with created_at value
+                    db.session.execute(text(
+                        "UPDATE conversations SET updated_at = created_at WHERE updated_at IS NULL"
+                    ))
+                    db.session.commit()
+                    logging.info("✅ Migration: Added updated_at column to conversations")
+        except Exception as e:
+            db.session.rollback()
+            logging.warning(f"conversations updated_at migration skipped: {e}")
+
     @app.route('/health')
     def health():
         import model.model_loader as model_loader
