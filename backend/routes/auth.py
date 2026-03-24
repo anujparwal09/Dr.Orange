@@ -2,12 +2,14 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 import re
 import requests as http_requests
+import logging
 from models import User
 from extensions import db
 
 auth_bp = Blueprint('auth', __name__)
 
 GOOGLE_TOKENINFO_URL = 'https://oauth2.googleapis.com/tokeninfo'
+logger = logging.getLogger(__name__)
 
 def is_valid_email(email):
     return re.match(r"[^@]+@[^@]+\.[^@]+", email)
@@ -18,43 +20,55 @@ def google_auth():
     """Authenticate a user via Google ID token (sign in or sign up)."""
     data = request.get_json()
     if not data or not data.get('credential'):
+        logger.warning("❌ Google auth: Missing credential")
         return jsonify({"error": "Missing Google credential"}), 400
 
     credential = data['credential']
+    logger.info("🔐 Google auth: Verifying token...")
 
     try:
-        # Verify the Google ID token via Google's tokeninfo endpoint
+        # Verify the Google ID token via Google's tokeninfo endpoint (increased timeout to 15s)
+        logger.info(f"🌐 Calling Google tokeninfo endpoint...")
         resp = http_requests.get(
             GOOGLE_TOKENINFO_URL,
             params={'id_token': credential},
-            timeout=10
+            timeout=15
         )
 
         if resp.status_code != 200:
-            return jsonify({"error": "Invalid Google token"}), 401
+            logger.error(f"❌ Google tokeninfo returned {resp.status_code}: {resp.text[:200]}")
+            return jsonify({"error": f"Invalid Google token (status {resp.status_code})"}), 401
 
         google_data = resp.json()
         email = google_data.get('email')
         name = google_data.get('name', email.split('@')[0] if email else 'User')
         
         if not email:
+            logger.error("❌ Google tokeninfo: No email in response")
             return jsonify({"error": "Could not retrieve email from Google"}), 400
+
+        logger.info(f"✅ Google verified email: {email}")
 
         # Check if user already exists
         user = User.query.filter_by(email=email).first()
 
         if user:
+            logger.info(f"👤 Existing user found: {email}")
             # Existing user — link to Google if not already
             if user.auth_provider == 'local':
                 user.auth_provider = 'google'
                 db.session.commit()
+                logger.info(f"🔗 User {email} now linked to Google")
         else:
             # Create new user via Google
+            logger.info(f"🆕 Creating new user from Google: {email}")
             user = User(name=name, email=email, auth_provider='google')
             db.session.add(user)
             db.session.commit()
+            logger.info(f"✅ User created: {email} (ID: {user.id})")
 
         token = create_access_token(identity=str(user.id))
+        logger.info(f"🎟️  JWT token generated for user: {email}")
 
         return jsonify({
             "message": "Google authentication successful",
@@ -65,9 +79,16 @@ def google_auth():
         }), 200
 
     except http_requests.exceptions.Timeout:
-        return jsonify({"error": "Google verification timed out"}), 504
+        logger.error("⏱️ Google verification timed out after 15s")
+        return jsonify({"error": "Google verification timed out. Please check your internet connection and try again."}), 504
+    except http_requests.exceptions.ConnectionError as e:
+        logger.error(f"🔌 Connection error to Google: {str(e)}")
+        return jsonify({"error": "Cannot reach Google verification service. Please check your internet."}), 503
     except Exception as e:
         db.session.rollback()
+        logger.error(f"🔴 Google auth exception: {type(e).__name__}: {str(e)}")
+        import traceback
+        logger.error(f"📍 Traceback: {traceback.format_exc()}")
         return jsonify({"error": f"Google authentication failed: {str(e)}"}), 500
 
 @auth_bp.route('/signup', methods=['POST'])

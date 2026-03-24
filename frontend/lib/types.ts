@@ -1,4 +1,5 @@
 export interface PredictionResult {
+  scan_id?: string;
   disease: string;
   confidence: number;
   quality_score: number;
@@ -9,6 +10,9 @@ export interface PredictionResult {
   treatment: string[];
   hindi_summary: string;
   confidence_breakdown: Record<string, number>;
+  model_used?: 'local_mtl' | 'gemini_vision' | 'mock';
+  gemini_used?: boolean;
+  fallback_used?: boolean;
 }
 
 export interface Message {

@@ -197,27 +197,47 @@ def get_full_prediction(image_input, model, force_gemini=False):
     confidence = local_result['disease_confidence']
     disease = local_result['disease']
 
-    # Decide if Gemini should OVERRIDE the local model's prediction
-    override_disease = (
+    # Decide if Gemini should be called
+    # Only call Gemini if:
+    # 1. confidence is low (below threshold), OR
+    # 2. disease needs clarification (Multiple_Diseases, Rotten, Unknown), OR
+    # 3. force_gemini is True (dev/override mode)
+    should_call_gemini = (
         force_gemini or
         confidence < CONFIDENCE_THRESHOLD or
         disease in ["Multiple_Diseases", "Rotten", "Unknown"]
     )
+    
+    print(f"🔍 Gemini decision: confidence={confidence:.4f}, threshold={CONFIDENCE_THRESHOLD}, should_call={should_call_gemini}")
 
-    # User requested Gemini to ALWAYS run for providing rich summaries and treatments
-    gemini_report = call_gemini_vision(image_input, local_result, override_disease)
-
-    local_result["gemini_used"] = True
-    local_result["gemini_report"] = gemini_report
-
-    # Process valid Gemini results
-    if gemini_report and "error" not in gemini_report:
-        if override_disease:
-            local_result["disease"] = gemini_report.get("disease_name", disease)
-            local_result["fallback_used"] = True
-            local_result["model_used"] = "gemini_vision"
+    gemini_report = None
+    if should_call_gemini:
+        print(f"📞 Calling Gemini for: {disease} (confidence={confidence:.4f})")
+        gemini_report = call_gemini_vision(image_input, local_result, confidence < CONFIDENCE_THRESHOLD)
+        
+        # Process valid Gemini results
+        if gemini_report and "error" not in gemini_report:
+            if confidence < CONFIDENCE_THRESHOLD:
+                # Low confidence: Override with Gemini's disease
+                local_result["disease"] = gemini_report.get("disease_name", disease)
+                local_result["fallback_used"] = True
+                local_result["model_used"] = "gemini_vision"
+            else:
+                # Medium-high confidence: Keep local disease, just append the rich summary
+                local_result["fallback_used"] = False
+            
+            local_result["gemini_report"] = gemini_report
+            local_result["gemini_used"] = True
         else:
-            # We keep local disease, just append the rich summary
-            local_result["fallback_used"] = False
+            print(f"⚠️ Gemini failed: {gemini_report}")
+            local_result["gemini_used"] = False
+            local_result["gemini_report"] = None
+    else:
+        # Confidence is high and disease is clear: Skip Gemini
+        print(f"⏭️ Skipping Gemini: confidence is high ({confidence:.4f} >= {CONFIDENCE_THRESHOLD})")
+        local_result["gemini_used"] = False
+        local_result["gemini_report"] = None
+        # Generate basic treatment from disease knowledge
+        local_result["fallback_used"] = False
 
     return local_result
