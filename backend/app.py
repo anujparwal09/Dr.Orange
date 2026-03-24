@@ -135,19 +135,14 @@ def create_app(config_name=None):
 # ─── Create app ───────────────────────────────────────────────────────────────
 app = create_app()
 
-# ─── Load ML model ────────────────────────────────────────────────────────────
-# Fix: load_model_once() takes no arguments — path is read from inside model_loader
-# We set an env var so model_loader knows where to find the file
+# ─── Configure Model Path ─────────────────────────────────────────────────────
+# Do NOT load the model on startup - it takes too long on Render (32MB, ~20-30s)
+# Instead, load it lazily on first prediction request
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "orange_mtl_model.keras")
 os.environ.setdefault("MODEL_PATH", MODEL_PATH)
 
-from model.model_loader import load_model_once
-
-try:
-    load_model_once()
-    logging.info("✅ ML model loaded successfully")
-except Exception as e:
-    logging.warning(f"⚠️  ML model not loaded: {e} — predict route will return mock data")
+logging.info(f"Model path configured: {MODEL_PATH}")
+logging.info("ML model will be loaded on first prediction request (lazy loading)")
 
 # ─── Entry point ──────────────────────────────────────────────────────────────
 if __name__ == '__main__':
