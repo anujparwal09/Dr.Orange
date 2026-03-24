@@ -14,13 +14,18 @@ model_loaded = False
 # ==============================
 # CONFIG
 # ==============================
-HF_REPO_ID      = "anujparwal09/dr-orange-model"
-MODEL_FILENAME  = "orange_mtl_model.keras"
+HF_REPO_ID          = "anujparwal09/dr-orange-model"
+MODEL_FILENAME      = "orange_mtl_model.h5"
+FALLBACK_FILENAME   = "orange_mtl_model.keras"
 
 # Where to cache the model on Render's disk
 LOCAL_MODEL_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     MODEL_FILENAME
+)
+FALLBACK_LOCAL_MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    FALLBACK_FILENAME
 )
 
 # ==============================
@@ -65,6 +70,11 @@ def load_model_once(model_path: str = None):
         or LOCAL_MODEL_PATH
     )
 
+    # fallback to .keras file if H5 is missing locally
+    if not os.path.exists(resolved_path) and os.path.exists(FALLBACK_LOCAL_MODEL_PATH):
+        logging.warning(f"⚠️  Primary model not found at {resolved_path}, falling back to {FALLBACK_LOCAL_MODEL_PATH}")
+        resolved_path = FALLBACK_LOCAL_MODEL_PATH
+
     logging.info(f"🔍 Resolved model path: {resolved_path}")
     logging.info(f"📂 Checking if file exists at: {resolved_path}")
 
@@ -92,9 +102,23 @@ def load_model_once(model_path: str = None):
             logging.info(f"📊 File size: {os.path.getsize(resolved_path) / (1024*1024):.1f} MB")
 
         except Exception as e:
-            logging.error(f"❌ Hugging Face download failed: {type(e).__name__}: {e}")
-            model_loaded = False
-            return False
+            logging.error(f"❌ Hugging Face download failed for H5: {type(e).__name__}: {e}")
+            # Attempt fallback download with .keras format
+            try:
+                logging.info(f"⬇️  Attempting fallback download from HuggingFace: {HF_REPO_ID}/{FALLBACK_FILENAME}")
+                downloaded_path = hf_hub_download(
+                    repo_id=HF_REPO_ID,
+                    filename=FALLBACK_FILENAME,
+                    local_dir=os.path.dirname(os.path.abspath(resolved_path))
+                )
+                if os.path.abspath(downloaded_path) != os.path.abspath(resolved_path):
+                    os.makedirs(os.path.dirname(os.path.abspath(resolved_path)), exist_ok=True)
+                    shutil.copy2(downloaded_path, resolved_path)
+                logging.info(f"✅ Fallback model downloaded to: {resolved_path}")
+            except Exception as e2:
+                logging.error(f"❌ Fallback download failed as well: {type(e2).__name__}: {e2}")
+                model_loaded = False
+                return False
 
     # ── Verify file exists before loading ────────────────────────────────
     if not os.path.exists(resolved_path):
@@ -106,8 +130,28 @@ def load_model_once(model_path: str = None):
         file_mb = os.path.getsize(resolved_path) / (1024 * 1024)
         logging.info(f"🚀 Loading Keras model: {resolved_path} ({file_mb:.1f} MB)...")
 
-        model = tf.keras.models.load_model(resolved_path)
+        model = tf.keras.models.load_model(
+            resolved_path,
+            compile=False
+        )
         model_loaded = True
+
+        # Recompile for inference/consistency with training configuration
+        model.compile(
+            optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
+            loss={
+                'disease': 'categorical_crossentropy',
+                'quality_score': 'mse',
+                'shelf_life': 'mse',
+                'ripeness': 'categorical_crossentropy'
+            },
+            loss_weights={
+                'disease': 1.0,
+                'quality_score': 0.5,
+                'shelf_life': 0.3,
+                'ripeness': 0.7
+            }
+        )
 
         output_names = [o.name for o in model.outputs]
         logging.info(f"✅ Model successfully loaded")

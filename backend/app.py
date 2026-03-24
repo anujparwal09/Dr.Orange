@@ -75,18 +75,18 @@ def create_app(config_name=None):
 
     @app.route('/health')
     def health():
-        from model.model_loader import model_loaded, load_model_once
-        
+        import model.model_loader as model_loader
+
         # Try to ensure model is loaded
         model_status = "unknown"
         model_error = None
-        
+
         try:
-            if not model_loaded:
+            if not model_loader.model_loaded:
                 logging.info("Health check: Attempting to load model...")
-                load_model_once()
-            
-            if model_loaded:
+                model_loader.load_model_once()
+
+            if model_loader.model_loaded:
                 model_status = "loaded"
             else:
                 model_status = "failed_to_load"
@@ -95,14 +95,14 @@ def create_app(config_name=None):
             model_status = "error"
             model_error = str(e)
             logging.error(f"Health check model load error: {e}")
-        
+
         return jsonify({
             "status": "ok",
-            "model_loaded": model_loaded,
+            "model_loaded": model_loader.model_loaded,
             "model_status": model_status,
             "model_error": model_error,
             "timestamp": datetime.utcnow().isoformat()
-        }), 200 if model_loaded else 503
+        }), 200 if model_loader.model_loaded else 503
 
     @app.errorhandler(404)
     def not_found(e):
