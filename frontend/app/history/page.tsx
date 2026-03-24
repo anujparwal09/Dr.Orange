@@ -22,15 +22,21 @@ const fadeUp = {
 };
 
 export default function HistoryPage() {
-  const { token } = useAuth();
+  const { token, isLoading: authLoading } = useAuth();
   const [scans, setScans] = useState<Scan[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (authLoading) {
+      return;
+    }
+    
     if (token) {
       fetchScans();
+    } else {
+      setLoading(false);
     }
-  }, [token]);
+  }, [token, authLoading]);
 
   const fetchScans = async () => {
     try {

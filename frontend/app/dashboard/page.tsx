@@ -74,7 +74,7 @@ function CustomTooltip({ active, payload, label }: any) {
 }
 
 export default function DashboardPage() {
-  const { token } = useAuth();
+  const { token, isLoading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState(defaultStatCards);
   const [donut, setDonut] = useState(defaultDonutData);
@@ -83,7 +83,11 @@ export default function DashboardPage() {
   const [selectedScan, setSelectedScan] = useState<any>(null);
   
   useEffect(() => {
-    if (!token) return;
+    // Wait for auth to finish loading AND have a token
+    if (authLoading || !token) {
+      return;
+    }
+    
       const fetchData = async () => {
         try {
           const res = await axios.get('/api/history', {
@@ -91,9 +95,12 @@ export default function DashboardPage() {
           });
           const data = res.data;
           
-          if (!data || !data.scans) return;
+          if (!data) {
+            setLoading(false);
+            return;
+          }
           
-          const scans = data.scans;
+          const scans = data.scans || [];
           
           // Compute stats
           const total = data.total || scans.length;
@@ -165,7 +172,7 @@ export default function DashboardPage() {
         }
       };
       fetchData();
-  }, [token]);
+  }, [token, authLoading]);
   
   const hPercent = donut.find((d: any) => d.name === 'Healthy')?.value || 0;
 

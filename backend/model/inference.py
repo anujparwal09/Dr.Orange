@@ -217,7 +217,12 @@ def get_full_prediction(image_input, model, force_gemini=False):
         
         # Process valid Gemini results
         if gemini_report and "error" not in gemini_report:
-            if confidence < CONFIDENCE_THRESHOLD:
+            # For Rotten/Multiple_Diseases: ALWAYS use Gemini's specific disease name (not just low confidence)
+            if disease in ["Rotten", "Multiple_Diseases"]:
+                local_result["disease"] = gemini_report.get("disease_name", disease)
+                local_result["fallback_used"] = True
+                local_result["model_used"] = "gemini_vision"
+            elif confidence < CONFIDENCE_THRESHOLD:
                 # Low confidence: Override with Gemini's disease
                 local_result["disease"] = gemini_report.get("disease_name", disease)
                 local_result["fallback_used"] = True
