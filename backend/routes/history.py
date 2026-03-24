@@ -13,6 +13,8 @@ history_bp = Blueprint('history', __name__)
 def get_history():
     user_id = int(get_jwt_identity())
     
+    print(f"DEBUG: Fetching history for user_id: {user_id}")
+    
     limit = request.args.get('limit', 50, type=int)
     offset = request.args.get('offset', 0, type=int)
     
@@ -26,6 +28,8 @@ def get_history():
                       .offset(offset)\
                       .all()
                       
+    print(f"DEBUG: Found {len(scans)} scans for user_id: {user_id}")
+    
     # Calculate Dashboard Stats
     total_scans = Scan.query.filter_by(user_id=user_id).count()
     
@@ -41,6 +45,8 @@ def get_history():
     
     avg_quality = db.session.query(func.avg(Scan.quality_score)).filter_by(user_id=user_id).scalar()
     avg_quality_val = round(float(avg_quality), 1) if avg_quality else 0.0
+    
+    print(f"DEBUG: Total scans: {total_scans}, diseases_found: {diseases_found}, healthy: {healthy}")
     
     return jsonify({
         "scans": [scan.to_dict() for scan in scans],

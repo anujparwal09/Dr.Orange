@@ -172,6 +172,23 @@ export default function DashboardPage() {
         }
       };
       fetchData();
+
+      const onScanUpdated = () => {
+        fetchData();
+      };
+      const onStorage = (event: StorageEvent) => {
+        if (event.key === 'dr_orange_last_scan') {
+          fetchData();
+        }
+      };
+
+      window.addEventListener('dr-orange-scan-updated', onScanUpdated);
+      window.addEventListener('storage', onStorage);
+
+      return () => {
+        window.removeEventListener('dr-orange-scan-updated', onScanUpdated);
+        window.removeEventListener('storage', onStorage);
+      };
   }, [token, authLoading]);
   
   const hPercent = donut.find((d: any) => d.name === 'Healthy')?.value || 0;

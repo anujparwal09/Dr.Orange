@@ -118,6 +118,8 @@ def predict():
         # ==============================
         logger.info("💾 Saving scan to database...")
         user_id = int(get_jwt_identity())
+        
+        print(f"DEBUG: Saving scan for user_id: {user_id}")
 
         scan = Scan(
             user_id=user_id,
@@ -136,6 +138,8 @@ def predict():
         db.session.add(scan)
         db.session.commit()
         logger.info(f"✅ Scan saved with ID: {scan.id}")
+        
+        print(f"DEBUG: Scan saved with ID: {scan.id} for user_id: {user_id}")
 
         # ==============================
         # RESPONSE FORMATTING FOR FRONTEND

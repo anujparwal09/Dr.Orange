@@ -51,19 +51,31 @@ class Scan(db.Model):
     scanned_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
+        try:
+            all_prob = json.loads(self.all_probabilities) if self.all_probabilities else {}
+        except:
+            all_prob = {}
+        try:
+            ripeness_prob = json.loads(self.ripeness_probabilities) if self.ripeness_probabilities else {}
+        except:
+            ripeness_prob = {}
+        try:
+            gemini = json.loads(self.gemini_report) if self.gemini_report else None
+        except:
+            gemini = None
         return {
             'id': self.id,
             'user_id': self.user_id,
             'image_path': self.image_path,
             'disease': self.disease,
             'disease_confidence': self.disease_confidence,
-            'all_probabilities': json.loads(self.all_probabilities) if self.all_probabilities else {},
+            'all_probabilities': all_prob,
             'quality_score': self.quality_score,
             'shelf_life_days': self.shelf_life_days,
             'estimated_age_days': self.estimated_age_days,
             'ripeness_stage': self.ripeness_stage,
-            'ripeness_probabilities': json.loads(self.ripeness_probabilities) if self.ripeness_probabilities else {},
-            'gemini_report': json.loads(self.gemini_report) if self.gemini_report else None,
+            'ripeness_probabilities': ripeness_prob,
+            'gemini_report': gemini,
             'scanned_at': self.scanned_at.isoformat()
         }
 

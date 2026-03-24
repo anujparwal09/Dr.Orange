@@ -31,11 +31,31 @@ export default function HistoryPage() {
       return;
     }
     
+    const handler = () => {
+      if (token) {
+        fetchScans();
+      }
+    };
+
     if (token) {
       fetchScans();
     } else {
       setLoading(false);
     }
+
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === 'dr_orange_last_scan') {
+        handler();
+      }
+    };
+
+    window.addEventListener('dr-orange-scan-updated', handler);
+    window.addEventListener('storage', onStorage);
+
+    return () => {
+      window.removeEventListener('dr-orange-scan-updated', handler);
+      window.removeEventListener('storage', onStorage);
+    };
   }, [token, authLoading]);
 
   const fetchScans = async () => {

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Activity, Share2, RotateCcw, FileDown } from 'lucide-react';
+import { Upload, Activity, RotateCcw, FileDown } from 'lucide-react';
 import axios from 'axios';
 import jsPDF from 'jspdf';
 import type { PredictionResult } from '@/lib/types';
@@ -81,6 +81,12 @@ export default function AnalyzePage() {
         timeout: 120000,
       });
       setResult(res.data);
+
+      // Notify other views that a new scan was created so dashboard/history can refresh instantly.
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('dr-orange-scan-updated'));
+        localStorage.setItem('dr_orange_last_scan', String(Date.now()));
+      }
     } catch (err: any) {
       console.error("Prediction API failed:", err?.response?.data || err.message);
 
@@ -627,20 +633,6 @@ export default function AnalyzePage() {
                   <FileDown className="w-4 h-4" /> Generate PDF Report
                 </button>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    className="flex items-center justify-center gap-2"
-                    style={{
-                      background: 'var(--glass)',
-                      border: '1px solid var(--border)',
-                      color: 'var(--cream)',
-                      padding: 10,
-                      borderRadius: 10,
-                      fontSize: 13,
-                      cursor: 'none',
-                    }}
-                  >
-                    <Share2 className="w-4 h-4" /> Share
-                  </button>
                   <button
                     onClick={resetAnalyzer}
                     className="flex items-center justify-center gap-2"
