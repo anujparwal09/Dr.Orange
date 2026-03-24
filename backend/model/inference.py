@@ -174,7 +174,7 @@ def call_gemini_vision(image_input, local_result, override_disease):
         )
 
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-1.5-flash",
             contents=[img, prompt]
         )
 

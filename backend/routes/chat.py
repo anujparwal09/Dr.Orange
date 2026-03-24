@@ -148,7 +148,7 @@ def chat_with_history(conversation_id):
                 gemini_history.append(types.Content(role="model", parts=[types.Part.from_text(text=m.response)]))
 
             # Start chat with history
-            chat = client.chats.create(model="gemini-2.5-flash", config=config, history=gemini_history)
+            chat = client.chats.create(model="gemini-1.5-flash", config=config, history=gemini_history)
             
             contents = image_parts + [message] if message else image_parts
             response = chat.send_message(contents)

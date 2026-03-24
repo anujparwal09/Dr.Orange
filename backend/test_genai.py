@@ -17,7 +17,7 @@ history = [
 ]
 
 try:
-    chat = client.chats.create(model="gemini-2.5-flash", config=config, history=history)
+    chat = client.chats.create(model="gemini-1.5-flash", config=config, history=history)
     response = chat.send_message("What is 2+2?")
     print("CHAT SUCCESS:", response.text)
 except Exception as e:
@@ -26,7 +26,7 @@ except Exception as e:
 try:
     contents = history + [types.Content(role="user", parts=[types.Part.from_text(text="What is 2+2?")])]
     response2 = client.models.generate_content(
-        model="gemini-2.5-flash",
+        model="gemini-1.5-flash",
         contents=contents,
         config=config
     )
