@@ -53,6 +53,43 @@ The CNN prediction results are then passed to **Gemini 2.5 Flash**, which genera
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+
+### 🏠 Home — Hero
+<img width="1919" height="891" alt="Screenshot 2026-03-24 223631" src="https://github.com/user-attachments/assets/ec3f6678-a071-4cf9-b003-0de16ff83b41" />
+)
+
+
+### 🔄 Home — Process Flow
+<img width="1919" height="886" alt="Screenshot 2026-03-24 223857" src="https://github.com/user-attachments/assets/2bf7aeef-69cb-4830-ae64-c615fb0c9719" />
+
+
+### 🔬 Analyze — Orange Health Scanner
+<img width="1917" height="887" alt="Screenshot 2026-03-24 224115" src="https://github.com/user-attachments/assets/cc387cd4-ae85-4c26-8905-d828def983a8" />
+
+
+### 📊 Dashboard — Analytics
+<img width="1913" height="843" alt="Screenshot 2026-03-24 224203" src="https://github.com/user-attachments/assets/2cdacc2e-0277-45df-a844-926034dba706" />
+
+
+### 📋 History — Scan History
+<img width="1915" height="883" alt="Screenshot 2026-03-24 224256" src="https://github.com/user-attachments/assets/13be6598-8a01-43d3-b8e8-b2d78143f891" />
+
+
+### 💬 Chat — AI Agronomist
+<img width="1919" height="877" alt="Screenshot 2026-03-24 173115" src="https://github.com/user-attachments/assets/66a83d73-6208-4066-9851-77e8f29b78e3" />
+
+
+### ℹ️ About — Built for India's Orange Farmers
+<img width="1915" height="871" alt="Screenshot 2026-03-24 224630" src="https://github.com/user-attachments/assets/95c0132b-72ef-48e1-a938-1ba19c66a00b" />
+
+
+</div>
+
+---
+
 ## ✨ Feature Arsenal
 
 | 🔬 Feature | 💥 What It Does |
@@ -322,12 +359,22 @@ Dr.Orange/
 │   ├── components/                   # 🧩 Reusable components
 │   └── lib/                          # Types & API utilities
 │
-└── 🧠 ml/                            ← Training Pipeline
-    ├── model.py                      # MTL model architecture definition
-    ├── train.py                      # Training loop + callbacks
-    ├── evaluate.py                   # Metrics & confusion matrix
-    ├── data_loader.py                # Dataset pipeline & augmentation
-    └── inference.py                  # Standalone inference script
+├── 🧠 ml/                            ← Training Pipeline
+│   ├── model.py                      # MTL model architecture definition
+│   ├── train.py                      # Training loop + callbacks
+│   ├── evaluate.py                   # Metrics & confusion matrix
+│   ├── data_loader.py                # Dataset pipeline & augmentation
+│   └── inference.py                  # Standalone inference script
+│
+└── 📁 assets/                        ← README Screenshots
+    ├── home_hero.png
+    ├── home_capabilities.png
+    ├── home_process.png
+    ├── analyze_scanner.png
+    ├── dashboard.png
+    ├── history.png
+    ├── chat.png
+    └── about.png
 ```
 
 ---
