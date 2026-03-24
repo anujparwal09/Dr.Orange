@@ -20,7 +20,8 @@ interface ChatSession {
 }
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+const API_BASE = '';
+
 
 const SUGGESTIONS = [
   'What causes Citrus Canker?',

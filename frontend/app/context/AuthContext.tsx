@@ -39,7 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const storedToken = localStorage.getItem('token') || localStorage.getItem('dr_orange_token');
       if (storedToken) {
         try {
-          const res = await fetch('http://127.0.0.1:5000/api/auth/profile', {
+          const res = await fetch('/api/auth/profile', {
+            method: 'GET',
             headers: {
               Authorization: `Bearer ${storedToken}`,
             },
@@ -50,10 +51,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setToken(storedToken);
           } else {
             localStorage.removeItem('token');
+            localStorage.removeItem('dr_orange_token');
           }
         } catch (error) {
           console.error('Failed to fetch profile', error);
           localStorage.removeItem('token');
+          localStorage.removeItem('dr_orange_token');
         }
       }
       setIsLoading(false);

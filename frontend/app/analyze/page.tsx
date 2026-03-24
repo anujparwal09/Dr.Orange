@@ -81,9 +81,14 @@ export default function AnalyzePage() {
       setResult(res.data);
     } catch (err: any) {
       console.error("Prediction API failed:", err?.response?.data || err.message);
-      // Fallback to mock in dev
-      await new Promise((r) => setTimeout(r, 2200));
-      setResult(MOCK_RESULT);
+
+      // Fallback only in local/dev; in production just show error and no hardcoded value.
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        await new Promise((r) => setTimeout(r, 2200));
+        setResult(MOCK_RESULT);
+      } else {
+        setResult(null);
+      }
     } finally {
       setIsAnalyzing(false);
     }
