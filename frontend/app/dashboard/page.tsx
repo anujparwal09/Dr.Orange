@@ -81,6 +81,8 @@ export default function DashboardPage() {
   const [history, setHistory] = useState(defaultHistoryRows);
   const [qData, setQData] = useState<any[]>([]);
   const [selectedScan, setSelectedScan] = useState<any>(null);
+  const [lastUpdated, setLastUpdated] = useState<number | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   
   useEffect(() => {
     // Wait for auth to finish loading AND have a token
@@ -165,6 +167,9 @@ export default function DashboardPage() {
             };
           }));
 
+          setLastUpdated(Date.now());
+          setElapsedSeconds(0);
+
         } catch (e) {
           console.error('Failed to fetch history', e);
         } finally {
@@ -185,11 +190,26 @@ export default function DashboardPage() {
       window.addEventListener('dr-orange-scan-updated', onScanUpdated);
       window.addEventListener('storage', onStorage);
 
+      const pollId = window.setInterval(() => {
+        if (token) {
+          fetchData();
+        }
+      }, 12000);
+
       return () => {
         window.removeEventListener('dr-orange-scan-updated', onScanUpdated);
         window.removeEventListener('storage', onStorage);
+        window.clearInterval(pollId);
       };
   }, [token, authLoading]);
+
+  useEffect(() => {
+    if (!lastUpdated) return;
+    const timer = window.setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - lastUpdated) / 1000));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [lastUpdated]);
   
   const hPercent = donut.find((d: any) => d.name === 'Healthy')?.value || 0;
 
@@ -208,6 +228,11 @@ export default function DashboardPage() {
         <p className="text-sm mt-1.5" style={{ color: 'var(--muted)' }}>
           Track disease patterns, quality trends, and scan history across all your oranges.
         </p>
+        {lastUpdated && (
+          <div className="text-xs mt-1" style={{ color: 'var(--muted)' }}>
+            Updated after latest scan • Last refresh: {elapsedSeconds}s ago
+          </div>
+        )}
       </div>
 
       {/* Stat cards */}

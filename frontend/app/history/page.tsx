@@ -25,6 +25,8 @@ export default function HistoryPage() {
   const { token, isLoading: authLoading } = useAuth();
   const [scans, setScans] = useState<Scan[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<number | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   useEffect(() => {
     if (authLoading) {
@@ -52,11 +54,26 @@ export default function HistoryPage() {
     window.addEventListener('dr-orange-scan-updated', handler);
     window.addEventListener('storage', onStorage);
 
+    const pollId = window.setInterval(() => {
+      if (token) {
+        fetchScans();
+      }
+    }, 12000);
+
     return () => {
       window.removeEventListener('dr-orange-scan-updated', handler);
       window.removeEventListener('storage', onStorage);
+      window.clearInterval(pollId);
     };
   }, [token, authLoading]);
+
+  useEffect(() => {
+    if (!lastUpdated) return;
+    const timer = window.setInterval(() => {
+      setElapsedSeconds(Math.floor((Date.now() - lastUpdated) / 1000));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [lastUpdated]);
 
   const fetchScans = async () => {
     try {
@@ -64,6 +81,8 @@ export default function HistoryPage() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setScans(res.data.scans || []);
+      setLastUpdated(Date.now());
+      setElapsedSeconds(0);
     } catch (err) {
       console.error('Failed to fetch scans', err);
     } finally {
@@ -92,6 +111,11 @@ export default function HistoryPage() {
           <motion.div initial="hidden" animate="visible" variants={fadeUp} className="mb-10">
             <h1 className="font-playfair text-4xl font-bold mb-3">My Scan History</h1>
             <p className="text-[var(--muted)]">View all your previous orange scans and results.</p>
+            {lastUpdated && (
+              <div className="text-xs mt-2" style={{ color: 'var(--muted)' }}>
+                Updated after latest scan • Last refresh: {elapsedSeconds}s ago
+              </div>
+            )}
           </motion.div>
 
           {loading ? (

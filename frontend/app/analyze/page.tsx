@@ -84,8 +84,10 @@ export default function AnalyzePage() {
 
       // Notify other views that a new scan was created so dashboard/history can refresh instantly.
       if (typeof window !== 'undefined') {
+        const ts = String(Date.now());
         window.dispatchEvent(new Event('dr-orange-scan-updated'));
-        localStorage.setItem('dr_orange_last_scan', String(Date.now()));
+        localStorage.setItem('dr_orange_last_scan', ts);
+        console.debug('[Analyze] scan updated event emitted', { ts });
       }
     } catch (err: any) {
       console.error("Prediction API failed:", err?.response?.data || err.message);
@@ -632,7 +634,7 @@ export default function AnalyzePage() {
                 >
                   <FileDown className="w-4 h-4" /> Generate PDF Report
                 </button>
-                <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex justify-center">
                   <button
                     onClick={resetAnalyzer}
                     className="flex items-center justify-center gap-2"
@@ -640,10 +642,11 @@ export default function AnalyzePage() {
                       background: 'var(--glass)',
                       border: '1px solid var(--border)',
                       color: 'var(--cream)',
-                      padding: 10,
+                      padding: '10px 20px',
                       borderRadius: 10,
                       fontSize: 13,
-                      cursor: 'none',
+                      cursor: 'pointer',
+                      minWidth: 210,
                     }}
                   >
                     <RotateCcw className="w-4 h-4" /> Scan Another
