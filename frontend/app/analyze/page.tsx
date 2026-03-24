@@ -48,6 +48,7 @@ export default function AnalyzePage() {
   const [preview, setPreview] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<PredictionResult | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -67,6 +68,7 @@ export default function AnalyzePage() {
     if (!file) return;
     setIsAnalyzing(true);
     setResult(null);
+    setErrorMessage(null);
 
     try {
       const formData = new FormData();
@@ -82,7 +84,18 @@ export default function AnalyzePage() {
     } catch (err: any) {
       console.error("Prediction API failed:", err?.response?.data || err.message);
 
-      // Fallback only in local/dev; in production just show error and no hardcoded value.
+      let message = 'Prediction failed. Please try again.';
+      if (err.response?.status === 401) {
+        message = 'Session invalid. Please login again.';
+      } else if (err.response?.data?.error) {
+        message = err.response.data.error;
+      } else if (err.message) {
+        message = err.message;
+      }
+
+      setErrorMessage(message);
+
+      // Fallback only in local/dev; in production do not show mock value.
       if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         await new Promise((r) => setTimeout(r, 2200));
         setResult(MOCK_RESULT);
@@ -653,6 +666,18 @@ export default function AnalyzePage() {
         <div style={{ padding: 48, background: 'var(--glass)' }}>
           {!result && !isAnalyzing && (
             <div className="h-full flex items-center justify-center flex-col gap-4 text-center min-h-[400px]">
+              {errorMessage && (
+                <div
+                  className="w-full max-w-[320px] rounded-lg px-4 py-3 text-sm"
+                  style={{
+                    background: 'rgba(255,69,0,0.2)',
+                    color: '#FFBABA',
+                    border: '1px solid rgba(255,69,0,0.4)',
+                  }}
+                >
+                  {errorMessage}
+                </div>
+              )}
               <div
                 className="w-20 h-20 rounded-full flex items-center justify-center"
                 style={{
