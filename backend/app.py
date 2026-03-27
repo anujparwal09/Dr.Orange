@@ -81,7 +81,7 @@ def create_app(config_name=None):
                 conv_cols = [col['name'] for col in inspector.get_columns('conversations')]
                 if 'updated_at' not in conv_cols:
                     db.session.execute(text(
-                        "ALTER TABLE conversations ADD COLUMN updated_at DATETIME"
+                        "ALTER TABLE conversations ADD COLUMN updated_at TIMESTAMP"
                     ))
                     # Back-fill with created_at value
                     db.session.execute(text(
