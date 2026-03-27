@@ -71,3 +71,8 @@ frontend/out/
 # ---- Git safety ----
 *.pem
 *.key
+
+# Reports / generated files
+report pdf/
+*.pdf
+*.webp
