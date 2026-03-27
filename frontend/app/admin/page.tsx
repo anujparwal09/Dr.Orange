@@ -23,9 +23,10 @@ export default function AdminPage() {
 
   const fetchAdminData = async () => {
     try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
       const [userRes, scanRes] = await Promise.all([
-        axios.get('http://127.0.0.1:5000/api/admin/users', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('http://127.0.0.1:5000/api/admin/scans', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${apiUrl}/api/admin/users`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${apiUrl}/api/admin/scans`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setUsers(userRes.data.users);
       setScans(scanRes.data.scans);
@@ -39,7 +40,8 @@ export default function AdminPage() {
   const deleteUser = async (id: number) => {
     if (!confirm('Are you sure you want to delete this user?')) return;
     try {
-      await axios.delete(`http://127.0.0.1:5000/api/admin/user/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+      await axios.delete(`${apiUrl}/api/admin/user/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setUsers(users.filter((u) => u.id !== id));
     } catch (err) {
       alert('Failed to delete user. They might be the current admin.');
@@ -49,7 +51,8 @@ export default function AdminPage() {
   const deleteScan = async (id: number) => {
     if (!confirm('Are you sure you want to delete this scan?')) return;
     try {
-      await axios.delete(`http://127.0.0.1:5000/api/admin/scan/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+      await axios.delete(`${apiUrl}/api/admin/scan/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setScans(scans.filter((s) => s.id !== id));
     } catch (err) {
       alert('Failed to delete scan.');

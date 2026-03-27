@@ -73,7 +73,8 @@ export default function AnalyzePage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const res = await axios.post('/api/predict', formData, {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+      const res = await axios.post(`${apiUrl}/api/predict`, formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`

@@ -44,7 +44,8 @@ export default function LoginPage() {
     setErrorMsg('');
 
     try {
-      const res = await axios.post('/api/auth/google', {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+      const res = await axios.post(`${apiUrl}/api/auth/google`, {
         credential: response.credential,
       });
       login(res.data.data.token, res.data.data.user);
@@ -100,7 +101,8 @@ export default function LoginPage() {
     setLoading(true);
     setErrorMsg('');
     try {
-      const res = await axios.post('/api/auth/login', { email, password });
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+      const res = await axios.post(`${apiUrl}/api/auth/login`, { email, password });
       login(res.data.data.token, res.data.data.user);
       router.push('/dashboard');
     } catch (err: any) {

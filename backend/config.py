@@ -27,7 +27,7 @@ class DevelopmentConfig:
     MODEL_PATH = os.getenv('MODEL_PATH', 'model/orange_mtl_model.h5')
     GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
     
-    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000').split(',')
+    CORS_ORIGINS = os.getenv('CORS_ORIGINS', 'http://localhost:3000,https://dr-orange.vercel.app').split(',')
     GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 
 class ProductionConfig(DevelopmentConfig):

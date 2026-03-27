@@ -20,7 +20,7 @@ interface ChatSession {
 }
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const API_BASE = '';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
 
 
 const SUGGESTIONS = [
@@ -356,13 +356,24 @@ export default function ChatPage() {
 
       // Refresh sidebar to get updated title (backend updates title on first message)
       fetchSessions();
-    } catch (err: unknown) {
-      // Fallback response
+    } catch (err: any) {
+      console.error('Chat error:', err);
+      let errorText = 'Oops! Something went wrong connecting to the server. Please check your internet connection and try again. 🍊';
+      
+      if (err.response) {
+        if (err.response.status === 401) {
+          errorText = 'Your session has expired or you are not authorized. Please log in again to continue. 🍊';
+        } else if (err.response.status === 404) {
+          errorText = 'The chat service endpoint was not found. Please contact support. 🍊';
+        } else if (err.response.data?.error) {
+          errorText = `Error: ${err.response.data.error} 🍊`;
+        }
+      }
+
       const errorMsg: Message = {
         id: `err_${Date.now()}`,
         role: 'bot',
-        content:
-          'Oops! Something went wrong connecting to the server. Please check your internet connection and try again. 🍊',
+        content: errorText,
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {

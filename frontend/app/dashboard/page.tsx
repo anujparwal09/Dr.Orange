@@ -100,7 +100,8 @@ export default function DashboardPage() {
       const fetchData = async (currentToken: string | null = tokenRef.current) => {
         if (!currentToken) return;
         try {
-          const res = await axios.get(`/api/history?_t=${Date.now()}`, {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+          const res = await axios.get(`${apiUrl}/api/history?_t=${Date.now()}`, {
             headers: { Authorization: `Bearer ${currentToken}` }
           });
           const data = res.data;

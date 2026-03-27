@@ -39,7 +39,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const storedToken = localStorage.getItem('token') || localStorage.getItem('dr_orange_token');
       if (storedToken) {
         try {
-          const res = await fetch('/api/auth/profile', {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://dr-orange.onrender.com';
+          const res = await fetch(`${apiUrl}/api/auth/profile`, {
             method: 'GET',
             headers: {
               Authorization: `Bearer ${storedToken}`,
@@ -74,6 +75,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('dr_orange_token');
+    document.cookie = "dr_orange_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setToken(null);
     setUser(null);
     router.push('/login');
