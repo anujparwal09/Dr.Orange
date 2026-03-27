@@ -123,6 +123,9 @@ def chat_with_history(conversation_id):
             image_parts.append(pil_img)
 
     api_key = current_app.config.get('GEMINI_API_KEY')
+    print(f"📩 Chat request for conversation {conversation_id}")
+    print(f"📩 Message: {message[:50]}...")
+    print(f"🔑 API Key present: {bool(api_key)}")
 
     # Update title if it's "New Chat"
     title_source = message if message else "Image analysis"
@@ -132,14 +135,15 @@ def chat_with_history(conversation_id):
     reply = ""
 
     if not api_key:
+        print("⚠️ No GEMINI_API_KEY found in config. Using fallback.")
         reply = handle_fallback_text(message)
     else:
         try:
+            print("🚀 Calling Gemini API (gemini-1.5-flash)...")
             client = genai.Client(api_key=api_key)
-            config = types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT
-            )
-
+            
+            # Using the official google-genai SDK 
+            
             # Build previous history from DB (latest 10 message pairs)
             db_messages = ChatMessage.query.filter_by(conversation_id=conversation_id).order_by(ChatMessage.created_at.asc()).all()
             gemini_history = []
@@ -148,15 +152,28 @@ def chat_with_history(conversation_id):
                 gemini_history.append(types.Content(role="model", parts=[types.Part.from_text(text=m.response)]))
 
             # Start chat with history
-            chat = client.chats.create(model="gemini-1.5-flash", config=config, history=gemini_history)
+            chat_config = types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+                temperature=0.7
+            )
+            chat = client.chats.create(model="gemini-1.5-flash", config=chat_config, history=gemini_history)
             
             contents = image_parts + [message] if message else image_parts
             response = chat.send_message(contents)
-            reply = response.text
+            
+            if response and response.text:
+                reply = response.text
+                print(f"✅ Gemini response received ({len(reply)} chars)")
+            else:
+                print("⚠️ Gemini returned empty response. Using fallback.")
+                reply = handle_fallback_text(message)
 
         except Exception as e:
+            print(f"❌ Gemini API error: {str(e)}")
+            import traceback
+            traceback.print_exc()
             current_app.logger.error(f"Gemini API error: {e}", exc_info=True)
-            reply = handle_fallback_text(message)
+            reply = f"⚠️ Error generating response: {str(e)}" if current_app.debug else handle_fallback_text(message)
 
     # Save to db & touch updated_at so conversation floats to top of sidebar
     from datetime import datetime as _dt
