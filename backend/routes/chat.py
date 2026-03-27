@@ -156,7 +156,7 @@ def chat_with_history(conversation_id):
                 system_instruction=SYSTEM_PROMPT,
                 temperature=0.7
             )
-            chat = client.chats.create(model="gemini-1.5-flash", config=chat_config, history=gemini_history)
+            chat = client.chats.create(model="gemini-2.5-flash", config=chat_config, history=gemini_history)
             
             contents = image_parts + [message] if message else image_parts
             response = chat.send_message(contents)
