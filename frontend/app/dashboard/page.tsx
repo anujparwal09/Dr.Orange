@@ -48,7 +48,6 @@ const diseaseStyles: Record<string, { bg: string; color: string; border: string;
   melanose: { bg: 'rgba(255,140,0,0.1)', color: 'var(--orange)', border: 'rgba(255,140,0,0.25)', symbol: '~' },
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 function CustomTooltip({ active, payload, label }: any) {
   if (active && payload && payload.length) {
     return (
@@ -86,13 +85,12 @@ export default function DashboardPage() {
   
   const tokenRef = useRef(token);
 
-  // Keep ref in sync so interval/event-listeners always use the latest token
   useEffect(() => {
     tokenRef.current = token;
   }, [token]);
 
   useEffect(() => {
-    // Wait for auth to finish loading AND have a token
+ 
     if (authLoading || !token) {
       return;
     }
