@@ -516,7 +516,7 @@ Built for educational purposes and Indian agriculture research. Go build somethi
 
 ## 👤 Author
 
-**Anuj Parwal** — Full Stack Developer
+**Anuj Parwal** — Full Stack Developer <br>
 **Anuj Agrawal** — Full Stack & AI-ML Developer
 
 ---
