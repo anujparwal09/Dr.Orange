@@ -12,7 +12,6 @@ def build_mtl_model(num_disease_classes=6, img_size=224) -> tf.keras.Model:
     backbone.trainable = False
     x = backbone(inputs, training=False)
 
-    # Shared feature extractor
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
     x = tf.keras.layers.Dense(512, activation='relu',
                                kernel_regularizer=tf.keras.regularizers.l2(1e-4))(x)
@@ -51,7 +50,6 @@ def build_mtl_model(num_disease_classes=6, img_size=224) -> tf.keras.Model:
     ripeness_out = tf.keras.layers.Dense(
         4, activation='softmax', name='ripeness'
     )(r)
-
     # Build model
     model = tf.keras.Model(
         inputs=inputs,
@@ -87,7 +85,6 @@ def compile_model(model) -> None:
             'ripeness': ['accuracy']
         }
     )
-
 def get_callbacks(save_path='orange_mtl_model.h5') -> list:
     return [
         tf.keras.callbacks.ModelCheckpoint(
