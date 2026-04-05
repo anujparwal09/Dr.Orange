@@ -517,9 +517,7 @@ Built for educational purposes and Indian agriculture research. Go build somethi
 ## 👤 Author
 
 **Anuj Parwal** — Full Stack Developer
-
-[![GitHub](https://img.shields.io/badge/GitHub-anujparwal09-181717?style=flat-square&logo=github)](https://github.com/anujparwal09/Dr.Orange)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-anuj--parwal-0A66C2?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/anuj-parwal-805829283/)
+**Anuj Agrawal** — Full Stack & AI-ML Developer
 
 ---
 
